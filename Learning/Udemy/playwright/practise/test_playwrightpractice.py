@@ -1,7 +1,12 @@
 import time
 from time import sleep
 
+import pytest
 from playwright.sync_api import Page, expect, Playwright
+
+from apibase import Api_Utils
+
+
 # login tests
 def test_login(page:Page):
     page.goto("https://rahulshettyacademy.com/loginpagePractise/")
@@ -173,6 +178,91 @@ def test_webtables(page:Page):
     riceRow = page.locator("tr").filter(has_text="Rice")
     print("rice row: ", riceRow)
     expect(riceRow.locator("td").nth(colValue)).to_have_text("37")
+
+# API + UI (E2E testing)
+"""
+
+1. login
+login manually or though UI: add username and password and click login button
+    from inspect>>network>>header section - we can get call method(GET\POST), request URL, status code
+    from inspect>>network>>payload section - we can get the json body 
+    from inspect>>network>>Response section - we can get authorization token, and complete response.
+
+login through api call:
+    in postman: 
+    select method (GET\POST)
+    add request URL
+    add json
+    
+2. create order
+manually or though UI: create order by adding item to cart and add the required details like country. 
+    from inspect>>network>>header section - we can get call method(GET\POST), request URL, status code and Authorization token
+    from inspect>>network>>payload section - we can get the json body 
+    from inspect>>network>>Response section - we can get the complete response(e.g order id), in this case we will see the token at header section not in the response.
+"""
+
+def test_api(playwright:Playwright):
+    browser = playwright.chromium.launch(headless=False)
+    context = browser.new_context()
+    page = context.new_page()
+
+# 1. Login (UI)
+    page.goto("https://rahulshettyacademy.com/client")
+    page.get_by_placeholder("email@example.com").fill("wasimahmad4210@gmail.com")
+    page.get_by_placeholder("enter your passsword").fill("Automation@4210")
+    page.get_by_role("button", name="Login").click()
+
+# 2. Create Order (API)
+    apiUtiles = Api_Utils()
+    orderID = apiUtiles.createOrder(playwright)
+
+# 3. validate product(api)
+    orderHistory = apiUtiles.getOrderHistory(playwright)
+    assert orderID in orderHistory
+
+# 3. validate product(UI)
+    page.get_by_role("button", name="ORDERS").click()
+    productRow = page.locator("tr").filter(has_text=orderID)
+    productRow.get_by_role("button", name="View").click()
+    expect(page.locator(".tagline")).to_have_text("Thank you for Shopping With Us")
+    sleep(2)
+    page.close()
+    context.close()
+
+
+# network interception
+fakePayloadEmptyOrderResponse = {"data":[],"message":"No Orders"}
+def network_intercept(route):
+    route.fulfill(
+        json=fakePayloadEmptyOrderResponse
+    )
+
+def test_network_interception(page:Page):
+    page.goto("https://rahulshettyacademy.com/client")
+    # event listener, this route method will use to intercept the network response, this listener will execute the event as soon as the below code hits the request url provided in the first argument, in this case the api request url - https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/* hits once the ORDERS button is clicked.
+    page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/*", network_intercept)
+    page.get_by_placeholder("email@example.com").fill("wasimahmad4210@gmail.com")
+    page.get_by_placeholder("enter your passsword").fill("Automation@4210")
+    page.get_by_role("button", name="Login").click()
+    page.get_by_role("button", name="ORDERS").click()
+    # sleep(5)
+    # print(page.locator(".mt-4").text_content())
+    expect(page.locator(".mt-4")).to_contain_text("No Orders ")
+
+
+# parameterized tests (data driven tests)
+@pytest.mark.parametrize("input", [2, 4, 8, 10, 5])
+def test_even_numbers(input):
+    assert input%2 == 0
+
+@pytest.mark.parametrize("input1, input2, expected_output", [(1, 2, 3), (3, 9, 12), (0,0,0), (100, 0, 101)])
+def test_addition(input1, input2, expected_output):
+    assert input1 + input2 == expected_output
+
+
+
+
+
 
 
 
