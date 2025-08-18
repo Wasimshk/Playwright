@@ -231,16 +231,20 @@ def test_api(playwright:Playwright):
 
 
 # network interception
-fakePayloadEmptyOrderResponse = {"data":[],"message":"No Orders"}
-def network_intercept(route):
+
+# response interception
+# validation >> what the html shows when there is zero orders in order history page?, to achieve this we will need to delete all the orders from order history which is not best practice, instead we will intercept the response and change the payload to achieve this scenario.
+
+fakeEmptyOrderResponsePayload = {"data":[],"message":"No Orders"}
+def intercept_response(route):
     route.fulfill(
-        json=fakePayloadEmptyOrderResponse
+        json=fakeEmptyOrderResponsePayload
     )
 
 def test_network_interception(page:Page):
     page.goto("https://rahulshettyacademy.com/client")
     # event listener, this route method will use to intercept the network response, this listener will execute the event as soon as the below code hits the request url provided in the first argument, in this case the api request url - https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/* hits once the ORDERS button is clicked.
-    page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/*", network_intercept)
+    page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/*", intercept_response)
     page.get_by_placeholder("email@example.com").fill("wasimahmad4210@gmail.com")
     page.get_by_placeholder("enter your passsword").fill("Automation@4210")
     page.get_by_role("button", name="Login").click()
@@ -249,6 +253,36 @@ def test_network_interception(page:Page):
     # print(page.locator(".mt-4").text_content())
     expect(page.locator(".mt-4")).to_contain_text("No Orders ")
 
+# request call interception
+# validation >> test the scenario when someone is trying to access your orders from your order history what will show, expectation is to see the unauthorization message. To achieve this we will intercept the request call. it more like a security test.
+
+def intercept_request(route):
+    route.continue_(url="https://rahulshettyacademy.com/api/ecom/order/get-orders-details?id=68a35f996f585eb60d8260fa")
+
+def test_network_Interception2(page:Page):
+    page.goto("https://rahulshettyacademy.com/client")
+    page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-details?id=*", intercept_request)
+    page.get_by_placeholder("email@example.com").fill("wasimahmad4210@gmail.com")
+    page.get_by_placeholder("enter your passsword").fill("Automation@4210")
+    page.get_by_role("button", name="Login").click()
+    page.get_by_role("button", name="ORDERS").click()
+    page.get_by_role("button", name="View").first.click()
+    message = page.locator(".blink_me").text_content()
+    # sleep(5)
+    print(message)
+    # expect(page.locator(".blink_me")).to_have_text("You are not authorize to view this order")
+
+def test_session_storage(playwright:Playwright):
+    apiutils_obj = Api_Utils()
+    token = apiutils_obj.getToken(playwright)
+    browser = playwright.chromium.launch(headless=False)
+    context = browser.new_context()
+    page = context.new_page()
+    # script to inject token into session local storage
+    page.add_init_script(f"""localStorage.setItem('token', '{token}')""")
+    page.goto("https://rahulshettyacademy.com/client")
+    page.get_by_role("button", name="ORDERS").click()
+    expect(page.locator("h1")).to_have_text("Your Orders")
 
 # parameterized tests (data driven tests)
 @pytest.mark.parametrize("input", [2, 4, 8, 10, 5])
