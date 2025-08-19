@@ -16,11 +16,10 @@ with open("data/credentials.json", "r") as readerObj:
 
 
 @pytest.mark.parametrize("userdata", user_credentail_list)
-def test_e2e_web_api(playwright:Playwright, userdata):
-    browser = playwright.chromium.launch(headless=False)
-    context = browser.new_context()
-    page = context.new_page()
+def test_e2e_web_api(browser_instance, playwright:Playwright, userdata):
 
+    # browser instance fixture return page object
+    page = browser_instance
     # 1. Login (UI)
     loginPageObj = LoginPage(page)
     loginPageObj.navigate()
@@ -48,6 +47,3 @@ def test_e2e_web_api(playwright:Playwright, userdata):
         # view order summary
         orderSummaryPageObj = OrderSummaryPage(page)
         orderSummaryPageObj.view_order_Summary()
-
-    page.close()
-    context.close()
