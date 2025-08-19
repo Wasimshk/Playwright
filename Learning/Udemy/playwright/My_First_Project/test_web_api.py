@@ -4,6 +4,8 @@ from time import sleep
 import pytest
 from playwright.sync_api import Playwright, expect
 from utils.api_base import Api_Utils
+from pageObjects.login import LoginPage
+
 
 # import json
 with open("data/credentials.json", "r") as readerObj:
@@ -17,20 +19,16 @@ def test_e2e_web_api(playwright:Playwright, userdata):
     context = browser.new_context()
     page = context.new_page()
 
-    Email = userdata['userEmail']
-    Password = userdata['userPassword']
-
     # 1. Login (UI)
-    page.goto("https://rahulshettyacademy.com/client")
-    page.get_by_placeholder("email@example.com").fill(Email)
-    page.get_by_placeholder("enter your passsword").fill(Password)
-    page.get_by_role("button", name="Login").click()
+    loginPageObj = LoginPage(page)
+    loginPageObj.navigate()
+    loginPageObj.login(userdata)
 
     # 2. Create Order (API)
     apiUtiles = Api_Utils()
     orderID = apiUtiles.createOrder(playwright, userdata)
 
-    if "wasim" in Email:
+    if "wasim" in userdata['userEmail']:
         # 3. validate product(api)
         orderHistory = apiUtiles.getOrderHistory(playwright, userdata)
         assert orderID in orderHistory
@@ -40,6 +38,5 @@ def test_e2e_web_api(playwright:Playwright, userdata):
         productRow = page.locator("tr").filter(has_text=orderID)
         productRow.get_by_role("button", name="View").click()
         expect(page.locator(".tagline")).to_have_text("Thank you for Shopping With Us")
-        sleep(2)
     page.close()
     context.close()
