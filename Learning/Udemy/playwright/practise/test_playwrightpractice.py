@@ -6,7 +6,7 @@ from playwright.sync_api import Page, expect, Playwright
 
 from apibase import Api_Utils
 
-
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # login tests
 def test_login(page:Page):
     page.goto("https://rahulshettyacademy.com/loginpagePractise/")
@@ -25,6 +25,7 @@ def test_login_invalid_creds(page:Page):
     page.get_by_role("button", name="Sign In").click()
     expect(page.locator(".alert-danger.alert")).to_have_text("Incorrect username/password.")
 
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # login test with different browsers, chromium, firefox and Webkit(safari like) are inbuilt, for chrome and edge we will need channel or driver exe path
 def test_login_firefox(playwright:Playwright):
     firefoxbrowser = playwright.firefox.launch(headless=False)
@@ -74,7 +75,7 @@ def test_login_edge(playwright:Playwright):
     page.locator("#terms").check()
     page.get_by_role("button", name="Sign In").click()
 
-
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # UI validation - workflow from login to add items to cart and validate
 def test_ui_validations(page:Page):
     page.goto("https://rahulshettyacademy.com/loginpagePractise/")
@@ -108,6 +109,7 @@ def test_visiblity(page:Page):
     expect(page.get_by_placeholder("Hide/Show Example")).not_to_be_visible()
     expect(page.get_by_placeholder("Hide/Show Example")).to_be_hidden()
 
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Handle Child window
 def test_child_window(page: Page):
     page.goto("https://rahulshettyacademy.com/loginpagePractise/")
@@ -157,6 +159,8 @@ def test_frame(page:Page):
     frame_page.get_by_role("link", name="All Access Plan").click()
     expect(frame_page.locator("body")).to_contain_text("Happy Subscibers!")
 
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # web table
 """
 Check the price of rice is equal to 37
@@ -179,9 +183,10 @@ def test_webtables(page:Page):
     print("rice row: ", riceRow)
     expect(riceRow.locator("td").nth(colValue)).to_have_text("37")
 
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # API + UI (E2E testing)
 """
-
 1. login
 login manually or though UI: add username and password and click login button
     from inspect>>network>>header section - we can get call method(GET\POST), request URL, status code
@@ -229,7 +234,7 @@ def test_api(playwright:Playwright):
     page.close()
     context.close()
 
-
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # network interception
 
 # response interception
@@ -284,6 +289,7 @@ def test_session_storage(playwright:Playwright):
     page.get_by_role("button", name="ORDERS").click()
     expect(page.locator("h1")).to_have_text("Your Orders")
 
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # parameterized tests (data driven tests)
 @pytest.mark.parametrize("input", [2, 4, 8, 10, 5])
 def test_even_numbers(input):
@@ -293,6 +299,11 @@ def test_even_numbers(input):
 def test_addition(input1, input2, expected_output):
     assert input1 + input2 == expected_output
 
+@pytest.mark.parametrize("d", [{"name": "Wasim"}, {"name": "Almas"}])
+def test_parameterize_dict(d):
+    print("my name is", d["name"])
+
+# ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
