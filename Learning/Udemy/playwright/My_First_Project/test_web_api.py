@@ -5,7 +5,9 @@ import pytest
 from playwright.sync_api import Playwright, expect
 from utils.api_base import Api_Utils
 from pageObjects.login import LoginPage
-
+from pageObjects.dashboard import DashBoardPage
+from pageObjects.orderhistory import OrderHistoryPage
+from pageObjects.ordersummary import OrderSummaryPage
 
 # import json
 with open("data/credentials.json", "r") as readerObj:
@@ -23,20 +25,29 @@ def test_e2e_web_api(playwright:Playwright, userdata):
     loginPageObj = LoginPage(page)
     loginPageObj.navigate()
     loginPageObj.login(userdata)
+    # dashboardPageObj = loginPageObj.login(userdata) # use this when we return dashboard page object from login page class
 
     # 2. Create Order (API)
     apiUtiles = Api_Utils()
     orderID = apiUtiles.createOrder(playwright, userdata)
 
     if "wasim" in userdata['userEmail']:
-        # 3. validate product(api)
+        # 3.a validate product(api)
         orderHistory = apiUtiles.getOrderHistory(playwright, userdata)
         assert orderID in orderHistory
 
-    # # 3. validate product(UI)
-        page.get_by_role("button", name="ORDERS").click()
-        productRow = page.locator("tr").filter(has_text=orderID)
-        productRow.get_by_role("button", name="View").click()
-        expect(page.locator(".tagline")).to_have_text("Thank you for Shopping With Us")
+        # 3.b validate product(UI)
+        # click orders button to navidate to order history page
+        dashboardPageObj = DashBoardPage(page)
+        dashboardPageObj.select_orders_nav_link()
+
+        # validate if order is created and shows in order history
+        orderHistoryPageObj = OrderHistoryPage(page)
+        orderHistoryPageObj.validate_order_id(orderID)
+
+        # view order summary
+        orderSummaryPageObj = OrderSummaryPage(page)
+        orderSummaryPageObj.view_order_Summary()
+
     page.close()
     context.close()
