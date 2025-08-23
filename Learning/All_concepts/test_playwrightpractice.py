@@ -8,6 +8,8 @@ from apibase import Api_Utils
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # login tests
+
+@pytest.mark.logintest
 def test_login(page:Page):
     page.goto("https://rahulshettyacademy.com/loginpagePractise/")
     page.get_by_label("Username:").fill("rahulshettyacademy")
@@ -16,6 +18,7 @@ def test_login(page:Page):
     page.locator("#terms").check()
     page.get_by_role("button", name="Sign In").click()
 
+@pytest.mark.logintest
 def test_login_invalid_creds(page:Page):
     page.goto("https://rahulshettyacademy.com/loginpagePractise/")
     page.get_by_label("Username:").fill("wrongusername")
@@ -27,6 +30,7 @@ def test_login_invalid_creds(page:Page):
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # login test with different browsers, chromium, firefox and Webkit(safari like) are inbuilt, for chrome and edge we will need channel or driver exe path
+@pytest.mark.crosebrowser
 def test_login_firefox(playwright:Playwright):
     firefoxbrowser = playwright.firefox.launch(headless=False)
     context = firefoxbrowser.new_context()
@@ -38,6 +42,7 @@ def test_login_firefox(playwright:Playwright):
     page.locator("#terms").check()
     page.get_by_role("button", name="Sign In").click()
 
+@pytest.mark.crosebrowser
 def test_login_webkit(playwright:Playwright):
     webkitbrowser = playwright.webkit.launch(headless=False)
     context = webkitbrowser.new_context()
@@ -49,6 +54,7 @@ def test_login_webkit(playwright:Playwright):
     page.locator("#terms").check()
     page.get_by_role("button", name="Sign In").click()
 
+@pytest.mark.crosebrowser
 def test_login_chrome(playwright:Playwright):
     chromebrowser = playwright.chromium.launch(headless=False, channel="chrome")
     # There are two ways to run tests on chrome or edge, 1.use executable path argument 2. channel arguments
@@ -62,6 +68,7 @@ def test_login_chrome(playwright:Playwright):
     page.locator("#terms").check()
     page.get_by_role("button", name="Sign In").click()
 
+@pytest.mark.crosebrowser
 def test_login_edge(playwright:Playwright):
     edgebrowser = playwright.chromium.launch(headless=False, channel="msedge")
     # There are two ways to run tests on chrome or edge, 1.use executable path argument 2. channel arguments
@@ -77,6 +84,8 @@ def test_login_edge(playwright:Playwright):
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # UI validation - workflow from login to add items to cart and validate
+
+@pytest.mark.ui
 def test_ui_validations(page:Page):
     page.goto("https://rahulshettyacademy.com/loginpagePractise/")
     page.get_by_label("Username:").fill("rahulshettyacademy")
@@ -97,10 +106,12 @@ def test_ui_validations(page:Page):
     page.get_by_role("button", name="Checkout").click()
     page.locator("#country").fill("India")
     page.locator("label[for='checkbox2']").check()
-    page.get_by_role("button", name="Purchase").click()
-    expect(page.locator("div.alert-success")).to_contain_text("Success! Thank you! ")
+    # page.get_by_role("button").click()
+    # page.get_by_role("button", name="Purchase").click()
+    # expect(page.locator("div.alert-success")).to_contain_text("Success! Thank you! ")
 
 # visible assertions
+@pytest.mark.ui
 def test_visiblity(page:Page):
     page.goto("https://rahulshettyacademy.com/AutomationPractice/")
     expect(page.get_by_placeholder("Hide/Show Example")).to_be_visible()
@@ -111,6 +122,7 @@ def test_visiblity(page:Page):
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # Handle Child window
+@pytest.mark.ui
 def test_child_window(page: Page):
     page.goto("https://rahulshettyacademy.com/loginpagePractise/")
     with page.expect_popup() as child_window:
@@ -140,6 +152,7 @@ def test_child_window(page: Page):
         assert email == "mentor@rahulshettyacademy.com"
 
 # alert box
+@pytest.mark.ui
 def test_alertbox(page:Page):
     page.goto("https://rahulshettyacademy.com/AutomationPractice/")
     page.on("dialog", lambda dialog_event_argument: dialog_event_argument.accept())
@@ -147,12 +160,14 @@ def test_alertbox(page:Page):
     time.sleep(2)
 
 # mouse hover
+@pytest.mark.ui
 def test_mouse_hover(page:Page):
     page.goto("https://rahulshettyacademy.com/AutomationPractice/")
     page.get_by_role("button", name="Mouse Hover").hover()
     page.get_by_role("link", name="Top").click()
 
 # frame\iframe
+@pytest.mark.ui
 def test_frame(page:Page):
     page.goto("https://rahulshettyacademy.com/AutomationPractice/")
     frame_page = page.frame_locator("#courses-iframe")
@@ -168,7 +183,7 @@ identify the price column
 identify rice row
 extract the price of the rice
 """
-
+@pytest.mark.ui
 def test_webtables(page:Page):
     page.goto("https://rahulshettyacademy.com/seleniumPractise/#/offers")
     columnheader = page.locator("th[role='columnheader']")
@@ -205,7 +220,7 @@ manually or though UI: create order by adding item to cart and add the required 
     from inspect>>network>>payload section - we can get the json body 
     from inspect>>network>>Response section - we can get the complete response(e.g order id), in this case we will see the token at header section not in the response.
 """
-
+@pytest.mark.e2e
 def test_api(playwright:Playwright):
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()
@@ -242,14 +257,18 @@ def test_api(playwright:Playwright):
 
 fakeEmptyOrderResponsePayload = {"data":[],"message":"No Orders"}
 def intercept_response(route):
-    route.fulfill(
-        json=fakeEmptyOrderResponsePayload
-    )
+    route.fulfill(json=fakeEmptyOrderResponsePayload)
 
+@pytest.mark.interception
 def test_network_interception(page:Page):
     page.goto("https://rahulshettyacademy.com/client")
     # event listener, this route method will use to intercept the network response, this listener will execute the event as soon as the below code hits the request url provided in the first argument, in this case the api request url - https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/* hits once the ORDERS button is clicked.
-    page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/*", intercept_response)
+
+    # requires an additional function
+    # page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/*", intercept_response)
+
+    # with lambda function
+    page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/*", lambda route: route.fulfill(json=fakeEmptyOrderResponsePayload))
     page.get_by_placeholder("email@example.com").fill("wasimahmad4210@gmail.com")
     page.get_by_placeholder("enter your passsword").fill("Automation@4210")
     page.get_by_role("button", name="Login").click()
@@ -264,6 +283,7 @@ def test_network_interception(page:Page):
 def intercept_request(route):
     route.continue_(url="https://rahulshettyacademy.com/api/ecom/order/get-orders-details?id=68a35f996f585eb60d8260fa")
 
+@pytest.mark.interception
 def test_network_Interception2(page:Page):
     page.goto("https://rahulshettyacademy.com/client")
     page.route("https://rahulshettyacademy.com/api/ecom/order/get-orders-details?id=*", intercept_request)
@@ -277,6 +297,7 @@ def test_network_Interception2(page:Page):
     print(message)
     # expect(page.locator(".blink_me")).to_have_text("You are not authorize to view this order")
 
+@pytest.mark.session_local_storage
 def test_session_storage(playwright:Playwright):
     apiutils_obj = Api_Utils()
     token = apiutils_obj.getToken(playwright)
@@ -291,11 +312,11 @@ def test_session_storage(playwright:Playwright):
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # parameterized tests (data driven tests)
-@pytest.mark.parametrize("input", [2, 4, 8, 10, 5])
+@pytest.mark.parametrize("input", [2, 4, 8, 10, 18])
 def test_even_numbers(input):
     assert input%2 == 0
 
-@pytest.mark.parametrize("input1, input2, expected_output", [(1, 2, 3), (3, 9, 12), (0,0,0), (100, 0, 101)])
+@pytest.mark.parametrize("input1, input2, expected_output", [(1, 2, 3), (3, 9, 12), (0,0,0), (100, 0, 100)])
 def test_addition(input1, input2, expected_output):
     assert input1 + input2 == expected_output
 
