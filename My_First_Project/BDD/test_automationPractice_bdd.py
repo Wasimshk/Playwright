@@ -1,7 +1,7 @@
 from pytest_bdd import given, when, then, parsers, scenarios
 from playwright.sync_api import Page, expect
 
-scenarios("features/automationPractice.feature")
+scenarios("features\\automationPractice.feature")
 
 @given("user is on the login page")
 def goto_login_page(page:Page):

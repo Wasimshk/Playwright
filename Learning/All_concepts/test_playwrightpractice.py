@@ -30,7 +30,7 @@ def test_login_invalid_creds(page:Page):
 
 # ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 # login test with different browsers, chromium, firefox and Webkit(safari like) are inbuilt, for chrome and edge we will need channel or driver exe path
-@pytest.mark.crosebrowser
+@pytest.mark.crossbrowser
 def test_login_firefox(playwright:Playwright):
     firefoxbrowser = playwright.firefox.launch(headless=False)
     context = firefoxbrowser.new_context()
@@ -42,7 +42,7 @@ def test_login_firefox(playwright:Playwright):
     page.locator("#terms").check()
     page.get_by_role("button", name="Sign In").click()
 
-@pytest.mark.crosebrowser
+@pytest.mark.crossbrowser
 def test_login_webkit(playwright:Playwright):
     webkitbrowser = playwright.webkit.launch(headless=False)
     context = webkitbrowser.new_context()
@@ -54,7 +54,7 @@ def test_login_webkit(playwright:Playwright):
     page.locator("#terms").check()
     page.get_by_role("button", name="Sign In").click()
 
-@pytest.mark.crosebrowser
+@pytest.mark.crossbrowser
 def test_login_chrome(playwright:Playwright):
     chromebrowser = playwright.chromium.launch(headless=False, channel="chrome")
     # There are two ways to run tests on chrome or edge, 1.use executable path argument 2. channel arguments
@@ -68,7 +68,7 @@ def test_login_chrome(playwright:Playwright):
     page.locator("#terms").check()
     page.get_by_role("button", name="Sign In").click()
 
-@pytest.mark.crosebrowser
+@pytest.mark.crossbrowser
 def test_login_edge(playwright:Playwright):
     edgebrowser = playwright.chromium.launch(headless=False, channel="msedge")
     # There are two ways to run tests on chrome or edge, 1.use executable path argument 2. channel arguments
@@ -189,6 +189,7 @@ def test_webtables(page:Page):
     columnheader = page.locator("th[role='columnheader']")
     colValue = None
     for i in range(columnheader.count()):
+        # columnheader.nth(i) is same as arr[i]
         if columnheader.nth(i).filter(has_text="Price").count()>0:
             colValue = i
             print(f"Price Column Value is: {colValue}")

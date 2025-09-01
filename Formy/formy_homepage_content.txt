@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Formy</title>
+    <meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="OtRys0h+1UxgyaxbujOwrVATgWvEMHiwhXdebN7jlDkDCYuQXUkwbnv+MBu0gvmxIjeIGoK5V1mC414o6PAGjQ==" />
+
+    <link rel="stylesheet" href="/assets/application-4f3b4f08cd1f03905031efc552ebd06c532a62089d81d1cbff175de50df958a3.css" media="all" data-turbolinks-track="reload" />
+    <script src="/assets/application-467e0b1fae66618f98c39666f913d6e0b0827e15ee6f480150fb92acfe0a8ff4.js" data-turbolinks-track="reload"></script>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon-05ae272716c4133e0ba741678db1eeaf0867542d5a185910b558596b1752792a.ico" />
+
+  </head>
+
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-expand-lg bg-light">
+  <a class="navbar-brand" id="logo" href="/">Formy</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/form">Form</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Components
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="/autocomplete">Autocomplete</a>
+          <a class="dropdown-item" href="/buttons">Buttons</a>
+          <a class="dropdown-item" href="/checkbox">Checkbox</a>
+          <a class="dropdown-item" href="/datepicker">Datepicker</a>
+          <a class="dropdown-item" href="/dragdrop">Drag and Drop</a>
+          <a class="dropdown-item" href="/dropdown">Dropdown</a>
+          <a class="dropdown-item" href="/enabled">Enabled and disabled elements</a>
+          <a class="dropdown-item" href="/fileupload">File Upload</a>
+          <a class="dropdown-item" href="/keypress">Key and Mouse Press</a>
+          <a class="dropdown-item" href="/modal">Modal</a>
+          <a class="dropdown-item" href="/scroll">Page Scroll</a>
+          <a class="dropdown-item" href="/radiobutton">Radio Button</a>
+          <a class="dropdown-item" href="/switch-window">Switch Window</a>
+          <a class="dropdown-item" href="/form">Complete Web Form</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+      <div class="jumbotron-fluid">
+  <h1 class="display-3">Welcome to Formy</h1>
+  <p class="lead">This is a simple site that has form components that can be used for testing purposes.</p>
+  <hr class="my-4">
+  <p>Here are the list of all the components</p>
+    <li><a class="btn btn-lg" href="/autocomplete">Autocomplete</a></li>
+    <li><a class="btn btn-lg" href="/buttons">Buttons</a></li>
+    <li><a class="btn btn-lg" href="/checkbox">Checkbox</a></li>
+    <li><a class="btn btn-lg" href="/datepicker">Datepicker</a></li>
+    <li><a class="btn btn-lg" href="/dragdrop">Drag and Drop</a></li>
+    <li><a class="btn btn-lg" href="/dropdown">Dropdown</a></li>
+    <li><a class="btn btn-lg" href="/enabled">Enabled and disabled elements</a></li>
+    <li><a class="btn btn-lg" href="/fileupload">File Upload</a></li>
+    <li><a class="btn btn-lg" href="/keypress">Key and Mouse Press</a></li>
+    <li><a class="btn btn-lg" href="/modal">Modal</a></li>
+    <li><a class="btn btn-lg" href="/scroll">Page Scroll</a></li>
+    <li><a class="btn btn-lg" href="/radiobutton">Radio Button</a></li>
+    <li><a class="btn btn-lg" href="/switch-window">Switch Window</a></li>
+    <li><a class="btn btn-lg" href="/form">Complete Web Form</a></li>
+</div>
+
+    </div>
+    <!--  -->
+  </body>
+</html>
