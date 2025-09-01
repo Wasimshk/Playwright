@@ -1,19 +1,16 @@
 from playwright.sync_api import expect
 from page_object.home_page import Home
+from page_object.windowhandle import Windowhandle
 
 def test_child_window(formy_setup):
     page = formy_setup
     homepage = Home(page, expect)
     homepage.navigate()
-    page.get_by_role("link", name="Switch Window").click()
-    expect(page.locator("h1")).to_have_text("Switch Window")
-
-    with page.expect_popup() as childwindow:
-        page.locator("#new-tab-button").click()
-        childpage = childwindow.value
-        expect(childpage.locator("h1")).to_have_text("Welcome to Formy")
-        childpage.get_by_role("link", name="Checkbox").click()
-        expect(childpage.locator("h1")).to_have_text("Checkboxes")
+    module = "Switch Window"
+    homepage.open_module(module)
+    windowpage = Windowhandle(page, expect)
+    windowpage.validate_module_page(module)
+    windowpage.child_window_action()
     homepage.redirect()
 
 
@@ -21,9 +18,9 @@ def test_dialog_box(formy_setup):
     page = formy_setup
     homepage = Home(page, expect)
     homepage.navigate()
-    page.get_by_role("link", name="Switch Window").click()
-    expect(page.locator("h1")).to_have_text("Switch Window")
-
-    page.on("dialog", lambda dialog:dialog.accept())
-    page.locator("#alert-button").click()
+    module = "Switch Window"
+    homepage.open_module(module)
+    windowpage = Windowhandle(page, expect)
+    windowpage.validate_module_page(module)
+    windowpage.dialog_action()
     homepage.redirect()

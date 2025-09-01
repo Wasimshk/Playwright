@@ -15,3 +15,6 @@ class Home:
         self.page.locator("#logo").click()
         # validate home page
         self.expect(self.page.locator("h1")).to_have_text("Welcome to Formy")
+
+    def open_module(self, module):
+        self.page.get_by_role("link", name=module).click()
