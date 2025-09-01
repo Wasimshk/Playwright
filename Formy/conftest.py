@@ -25,13 +25,7 @@ def formy_setup(playwright:Playwright, request):
             browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()
     page = context.new_page()
-    page.goto("https://formy-project.herokuapp.com/")
-    expect(page.locator("h1")).to_have_text("Welcome to Formy")
     yield page
-    page.locator("#logo").click()
-    # validate home page
-    expect(page.locator("h1")).to_have_text("Welcome to Formy")
-    sleep(0.5)
     page.close()
     context.close()
     browser.close()

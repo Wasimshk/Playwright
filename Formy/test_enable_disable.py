@@ -1,10 +1,10 @@
-from time import sleep
-
 from playwright.sync_api import expect
-
+from page_object.home_page import Home
 
 def test_enable_disable(formy_setup):
     page = formy_setup
+    homepage = Home(page, expect)
+    homepage.navigate()
     page.get_by_role("link", name="Enabled and disabled elements").click()
 
     expect(page.locator("h1")).to_have_text("Enabled and Disabled elements")
@@ -14,3 +14,4 @@ def test_enable_disable(formy_setup):
     expect(page.locator("#input")).to_be_editable()
     page.locator("#input").fill("Wasim Shaikh")
     expect(page.locator("#input")).to_have_value("Wasim Shaikh")
+    homepage.redirect()
